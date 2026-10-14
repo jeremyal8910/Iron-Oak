@@ -998,6 +998,23 @@ function fillWild(){
   for(const f of farms)if(f.y>WH*0.58&&nd<3){defendPt(f.x,f.y,56,'the farmstead');nd++}
   [MB.ox,MB.oy,MB.flip,MB.spanW,MB.spanH,MB.noExtend,MB.keepRoad]=sv;
 }
+// Attack lanes: the main route across the field plus the best alternatives, each found by walling off the one before.
+// The advancing enemy divides its infantry between them instead of sending every squad down the shortest road.
+function computeLanes(){
+  const cx=WW/2,sp=WH-190,se=190,lanes=[],xb=new Uint8Array(GW*GH);let mainLen=0;
+  for(let k=0;k<5&&lanes.length<4;k++){
+    XBLOCK=k?xb:null;const p=findPath(cx,se,cx,sp,true);XBLOCK=null;if(!p)break;
+    const pts=[];let cur={x:cx,y:se};
+    for(const q of p){const n=Math.max(1,Math.ceil(Math.hypot(q.x-cur.x,q.y-cur.y)/8));for(let i=0;i<=n;i++)pts.push({x:cur.x+(q.x-cur.x)*i/n,y:cur.y+(q.y-cur.y)*i/n});cur=q}
+    let best=pts[0],bd=1e9;for(const q of pts){const d=Math.abs(q.y-WH/2);if(d<bd){bd=d;best=q}}
+    const len=pathLen({x:cx,y:se},p);if(!k)mainLen=len;
+    for(const q of pts)if(q.y>WH*0.3&&q.y<WH*0.7)for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const gx=Math.floor(q.x/CS)+dx,gy=Math.floor(q.y/CS)+dy;if(gx>=0&&gy>=0&&gx<GW&&gy<GH)xb[gy*GW+gx]=1}
+    if(len>mainLen*2.3)continue;                                    // not worth the walk
+    if(lanes.some(l=>Math.hypot(l.wp.x-best.x,l.wp.y-best.y)<220))continue;   // the same crossing again
+    lanes.push({wp:{x:best.x,y:best.y},len});
+  }
+  MAP.ai.lanes=lanes;
+}
 const ZFRAC={river:0.22,plains:0.26,forest:0.24,highland:0.20,village:0.24,marsh:0.22,fort:0.21,farmland:0.25};
 const ENGB={river:40,plains:36,forest:34,highland:44,village:38,marsh:32,fort:54,farmland:40};
 function setZones(use){
@@ -1014,6 +1031,7 @@ function loadMap(id,seed){
     ok=validateMap();
   }
   if(!ok){mbStart('river',seed>>>0,false,MAPS.river.name);MAPS.river.build();fillWild();setZones('river');finalizeMap()}
+  computeLanes();
   MAP.tries=tries;MAP.valid=ok;MAP.preset=use;
   if(UI_ON&&typeof document!=='undefined')bakeLayers();
   return MAP;
@@ -2211,6 +2229,12 @@ function aiThink(){
       G.aiAdv=true;
       const fl=inf.filter(s=>s.type==='sword'||s.type==='spear').slice(0,G.plan?G.plan.flankers:2);
       fl.forEach((s,i)=>{const st=MAP.ai.flank[i%2];s.ai.flank={x:st.x,y:st.y}});
+      {const L=MAP.ai.lanes||[];
+       if(L.length>1){
+        const pat=[];L.forEach((l,i)=>{pat.push(i)});let a=0,b=0;
+        for(const s of inf){s.ai.laneDone=false;if(s.ai.flank)s.ai.lane=1+(b++%(L.length-1));else s.ai.lane=a++%L.length}    // flankers take the side routes; the main body is spread evenly
+        for(const s of me.filter(q=>q.ai.role==='cav'&&q.ai.mode==='hammer')){s.ai.laneDone=false;s.ai.lane=a++%L.length}
+        G.aiLog.push('split across '+L.length+' lanes')}}
       for(const s of inf)if(s.ai.job==='forest')s.ai.job=null;
       toast('The enemy commander is advancing!',COL.e);
     }
@@ -2275,6 +2299,7 @@ function aiInf(sq,live,discovered){
 }
 // Where a blind advancing AI squad heads: the objective ground, else the freshest sighting, else the enemy deployment area.
 function aiSearchGoal(sq){
+  if(sq.ai&&sq.ai.lane!==undefined&&!sq.ai.laneDone){const wp=MAP.ai.lanes[sq.ai.lane].wp;if(dist(sq,wp)>70&&sq.y<wp.y)return wp;sq.ai.laneDone=true}
   const o=G.obj;
   if(o&&o.type==='bridge')return{x:MAP.cross[0]+MAP.cross[2]/2,y:MAP.cross[1]+MAP.cross[3]/2+50};
   if(o&&o.type==='defend')return{x:o.pt.x,y:o.pt.y-40};
@@ -2298,6 +2323,11 @@ function aiPickTarget(sq,live){
 // Advance: part of the infantry goes round by a ford while the rest pins the front.
 function aiAdvance(sq,live){
   const ai=sq.ai;
+  if(ai.lane!==undefined&&!ai.laneDone){   // march by your own lane until you reach the middle of the field or meet the enemy
+    const wp=MAP.ai.lanes[ai.lane].wp;
+    if(nearestOf(sq,live,300)||dist(sq,wp)<70||sq.y>wp.y)ai.laneDone=true;
+    else{if(!(sq.order.t==='move'&&Math.hypot(sq.order.x-wp.x,sq.order.y-wp.y)<30))orderMove(sq,wp.x,wp.y);return}
+  }
   if(ai.flank&&!ai.arrived){
     if(nearestOf(sq,live,110))ai.arrived=true;
     else if(sq.order.t==='move')return;
