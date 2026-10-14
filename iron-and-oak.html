@@ -28,6 +28,7 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.25 Georg
 #toasts div{background:rgba(25,20,14,.82);border-left:4px solid var(--gold);padding:4px 8px;font-size:12px;border-radius:3px}
 #camBtns{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:4px}
 #camBtns .btn{min-height:38px;min-width:38px;padding:0;background:rgba(42,37,31,.9)}
+#fireInfo{font-size:11px;color:var(--mut);padding:1px 2px 3px;min-height:14px}#fireRow .btn.on{background:#5a4a24;border-color:var(--gold)}
 #panel{background:var(--panel);border-top:1px solid var(--line);padding:5px 8px 6px;max-height:42vh;overflow-y:auto}
 #budget{font-size:11px;color:var(--mut);margin-bottom:3px}
 #roster{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:4px}
@@ -74,23 +75,68 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.25 Georg
 .card p,.card li{font-size:13px;line-height:1.4;margin-bottom:6px;color:#e3d9c2}
 .card ul{padding-left:18px;margin-bottom:8px}
 .card .row{margin-top:10px;flex-wrap:wrap}
+
+/* ===== bottom HUD + action panels ===== */
+:root{--bronze:#a98543;--bronze2:#caa35e;--stone:#8d8574;--hh:54px}
+#app{max-width:none}
+.btn.on{outline-color:var(--bronze2);background:#4a3f2c}
+#hud{flex:0 0 var(--hh);height:var(--hh);display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;padding:3px 6px 0;background:linear-gradient(#2d2924,#1d1a16);border-top:2px solid #6e5532;position:relative;z-index:6;overflow:hidden;white-space:nowrap}
+#hud>*{min-width:0}
+#hStep{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;font-size:9.5px;letter-spacing:.08em;color:var(--stone);text-transform:uppercase;line-height:1.25;padding:0 6px 3px 2px;border-right:1px solid #3a342c}
+#hStep b{display:block;font-size:12px;letter-spacing:0;text-transform:none;color:var(--ink);font-weight:600}
+#hInfo{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;gap:3px;max-width:200px;padding-bottom:3px}
+#meter{flex:none;width:64px;height:6px}
+#stxt{font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;max-width:190px}
+#hCtl{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding-bottom:3px}
+#hCtl .btn{min-height:36px;min-width:36px;padding:0 6px;font-size:14px}
+#selInfo{flex:0 1 190px;min-width:0;display:flex;flex-direction:column;justify-content:center;margin:0;padding:0 7px 3px;border-left:1px solid #3a342c;border-right:1px solid #3a342c;overflow:hidden}
+#selName{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#selMeta{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#selInfo .bar{height:3px;margin-top:2px}
+#selDesc{display:none}
+#hBar{position:relative;flex:1 1 0;display:flex;gap:2px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:stretch}
+#hBar::-webkit-scrollbar{display:none}
+.cat{flex:0 0 auto;min-width:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0 8px;border:1px solid transparent;border-bottom:0;border-radius:6px 6px 0 0;background:transparent;color:var(--mut);font:inherit;font-size:10.5px;cursor:pointer;position:relative}
+.cat:hover{background:#34302a;color:var(--ink)}
+.cat.act{background:#25211c;color:var(--bronze2);border-color:#6e5532}
+.cat.act::before{content:"";position:absolute;left:6px;right:6px;top:-1px;height:2px;background:var(--bronze2)}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#hGo{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding-bottom:3px}
+#hGo .row{margin:0;display:flex;gap:4px}
+#hGo .btn{flex:0 0 auto;min-height:36px;padding:0 10px;font-size:12px}
+#apanel{position:absolute;left:0;right:0;bottom:0;z-index:4;background:#25211c;border-top:2px solid var(--bronze);box-shadow:0 -8px 16px rgba(0,0,0,.35);padding:7px 8px;max-height:min(48%,290px);overflow-y:auto}
+.apane{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:flex-start}
+.apane .row{display:flex;flex-wrap:wrap;gap:4px;margin:0}
+.apane .row .btn{flex:0 0 auto}
+.pb{min-width:58px;height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;padding:0 6px;line-height:1.1}
+#pn-x{}
+.apane[data-pane=plan] #seq{margin:0;flex:1 1 320px;min-width:240px}
+.apane[data-pane=plan] #setupBox{flex:1 1 320px}
+.apane[data-pane=plan] #objRow{margin:0}
+#reconBox,#briefBox,#engBox,#deployBox{width:100%}
+#rcBtns{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+#rcLog{max-height:46px}
+#enChips{grid-template-columns:repeat(auto-fill,minmax(82px,1fr))}
+#engBox>.row{display:inline-flex;flex-wrap:wrap;margin-right:6px}
+#engBox>.row .btn{flex:0 0 auto;padding:0 12px}
+#roster{display:flex;overflow-x:auto;gap:4px;margin-bottom:2px;grid-template-columns:none}
+#roster .btn{flex:0 0 74px;min-height:46px}
+#fireInfo{flex:1 1 100%;font-size:11px;color:var(--mut);padding:0 2px;min-height:14px}
+#moreTxt{flex:1 1 220px;font-size:11px;color:var(--mut);line-height:1.4}
+#moreTxt #logo{font-size:15px;color:var(--ink);margin:0 0 2px}
+#moreTxt #otxt{flex:none;font-size:11px;color:var(--gold)}
+#hBar.fade{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent)}
+@media(max-width:560px){:root{--hh:50px}#hud{gap:4px;padding:3px 4px 0}#hStep{display:none}#stxt{display:none}#meter{width:40px}.cat{min-width:46px;padding:0 4px}#selInfo{flex-basis:84px;padding:0 5px 3px}#hCtl{gap:3px}#hCtl .btn{min-width:36px;padding:0 4px}#hGo .btn{padding:0 7px;font-size:11.5px}}
+@media(max-width:360px){#hInfo{display:none}}
+/* ===== the map fills its whole area, edge to edge ===== */
+#apanel{position:relative;left:auto;right:auto;bottom:auto;z-index:4;flex:0 0 auto;max-height:min(38vh,300px);box-shadow:none}
 </style>
 </head>
 <body>
 <div id="app">
-  <div id="top">
-    <div id="logo">IRON <span>&amp;</span> OAK</div>
-    <button class="btn" id="bPause">Pause</button>
-    <button class="btn" id="bSpeed">1×</button>
-    <button class="btn" id="bRestart">Restart</button>
-    <button class="btn sm" id="bHelp">?</button>
-    <div id="status"><div id="meter"><i id="mP"></i><i id="mE"></i></div><span id="stxt"></span></div>
-    <div id="otxt"></div>
-  </div>
   <div id="stage">
     <canvas id="cv"></canvas>
     <div id="toasts"></div>
-    <div id="camBtns"><button class="btn" id="zIn">+</button><button class="btn" id="zOut">−</button><button class="btn" id="zHome">⌂</button><button class="btn" id="zFit">⤢</button></div>
     <div id="over" class="ov hide"><div class="card"><h2 id="oT"></h2><p id="oP"></p><div class="row"><button class="btn pri" id="oRe">Redeploy</button><button class="btn" id="oNew">New army</button></div></div></div>
     <div id="intro" class="ov"><div class="card">
       <h2>Iron &amp; Oak</h2>
@@ -99,18 +145,19 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.25 Georg
         <li><b>Fog:</b> you only see what your troops can see. Scouts see furthest and spot troops hidden in forests. The enemy is just as blind.</li>
         <li><b>Commander:</b> his banner steadies nearby troops. If he falls, the army shakes.</li>
         <li><b>Objective:</b> choose one in the deploy panel. The enemy plan is different every battle.</li>
-        <li><b>Planning:</b> scout the enemy, read the briefing, dig in, then deploy. The numbered steps at the top of the panel take you between them.</li>
-        <li><b>Deploy:</b> tap a unit in the roster, then tap your zone (bottom, blue). Tap a squad to select it, then tap the zone to move it.</li>
-        <li><b>Battle:</b> tap your squad, then tap ground to move or an enemy to attack. Use Hold to keep reserves back.</li>
-        <li><b>The field is huge:</b> the armies start at opposite ends, so expect a long march. Use the minimap (bottom right) to jump around, ⌂ to return to your army and ⤢ to see everything. Hit 2× or 3× speed to speed up the walk.</li>
-        <li><b>Camera:</b> drag to pan, pinch or +/− to zoom.</li>
+        <li><b>Planning:</b> scout the enemy, read the briefing, dig in, then deploy. The Plan button in the bottom bar lists the steps; Back and Next move between them.</li>
+        <li><b>Deploy:</b> open Roster in the bottom bar, tap a unit, then tap your zone (bottom, blue). Tap a squad to select it, then tap the zone to move it.</li>
+        <li><b>Battle:</b> tap your squad, then tap ground to move or an enemy to attack. Use the bar along the bottom for orders, formations and firing modes.</li>
+        <li><b>The field is huge:</b> the armies start at opposite ends, so expect a long march. Use the minimap (bottom right) to jump around, and View in the bottom bar to return to your army or see everything. Hit 2× or 3× speed to speed up the walk.</li>
+        <li><b>Camera:</b> drag to pan, pinch or use the wheel to zoom.</li>
         <li><b>Terrain:</b> tap bare ground to see what it is. Forests hide troops; mud, marsh, rock and fields slow movement; roads are fast; hills see further and shoot further; walls and buildings block movement, arrows and sight.</li>
       </ul>
       <div class="row"><button class="btn pri" id="iGo">Begin</button></div>
     </div></div>
+
   </div>
-  <div id="panel">
-    <div id="seq"></div>
+  <div id="apanel" class="hide">
+      <div class="apane hide" data-pane="plan"><div id="seq"></div>
     <div id="setupBox">
       <div id="objRow"><select id="mapSel" aria-label="Map">
         <option value="random">Random map (wild country)</option><option value="river">River crossing</option><option value="plains">Open plains</option><option value="forest">Forest frontier</option>
@@ -121,16 +168,51 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.25 Georg
         <option value="defend">Defend the position</option><option value="commander">Protect the commander</option>
         <option value="random">Random objective</option></select></div>
     </div>
+      </div>
+      <div class="apane hide" data-pane="scout">
     <div id="reconBox"><div id="rcInfo"></div><div id="rcBtns"></div>
       <label id="rcThorL"><input type="checkbox" id="rcThor"> Thorough (+1 point, clearer reports)</label><div id="rcLog"></div></div>
+      </div>
+      <div class="apane hide" data-pane="intel">
     <div id="briefBox"><div id="brSum"></div><div id="brList"></div></div>
+      </div>
+      <div class="apane hide" data-pane="build">
     <div id="engBox"><div id="enInfo"></div><div id="enChips"></div>
       <div class="row"><button class="btn" data-e="rot">⟳ Rotate</button><button class="btn pri" data-e="build">Build</button><button class="btn" data-e="cancel">Cancel</button></div>
       <div class="row"><button class="btn" data-e="remove">Remove (refund)</button><button class="btn" data-e="undo">Undo last</button></div></div>
+      </div>
+      <div class="apane hide" data-pane="roster">
     <div id="deployBox">
       <div id="budget"></div>
       <div id="roster"></div>
     </div>
+      </div>
+      <div class="apane hide" data-pane="orders">
+        <div class="row" id="cmdRow"><button class="btn pb" data-a="hold" title="Stand fast and do not chase" data-ic="hold">Hold position</button><button class="btn pb" data-a="stop" title="Cancel the current order" data-ic="stop">Stop</button></div>
+      </div>
+      <div class="apane hide" data-pane="combat">
+        <div class="row" id="fireRow"><button class="btn pb" data-fm="will" title="Archers fire on their own cycles" data-ic="fwill">Fire at will</button><button class="btn pb" data-fm="volley" title="Archers loose together in timed volleys" data-ic="fvolley">Volley fire</button><button class="btn pb" data-fm="hold" title="Archers do not shoot; orders are kept" data-ic="fhold">Hold fire</button></div>
+        <div id="fireInfo" class="hide"></div>
+      </div>
+      <div class="apane hide" data-pane="form">
+        <div class="row" id="fRow"><button class="btn pb" data-f="line" data-ic="line">Line</button><button class="btn pb" data-f="shieldwall" title="Shield wall" data-ic="wall">Wall</button><button class="btn pb" data-f="square" data-ic="square">Square</button><button class="btn pb" data-f="wedge" data-ic="wedge">Wedge</button><button class="btn pb" data-f="loose" data-ic="loose">Loose</button></div>
+        <div class="row" id="adjRow"><button class="btn pb" data-a="narrow" data-ic="narrow">Narrow</button><button class="btn pb" data-a="wide" data-ic="wide">Wide</button><button class="btn pb" data-a="rotL" data-ic="turnL">Turn left</button><button class="btn pb" data-a="rotR" data-ic="turnR">Turn right</button><button class="btn pb" data-a="remove" id="bRemove" title="Remove this squad (refund)" data-ic="remove">Remove</button></div>
+      </div>
+      <div class="apane hide" data-pane="select">
+        <div class="row" id="selRow"><button class="btn pb" data-a="multi" title="Tap squads to add or remove them" data-ic="multi">Add to selection</button><button class="btn pb" data-a="all" data-ic="all">Select all</button><button class="btn pb" data-a="clear" data-ic="clear">Deselect</button></div>
+      </div>
+      <div class="apane hide" data-pane="view">
+        <div class="row"><button class="btn pb" id="zIn" data-ic="zin">Zoom in</button><button class="btn pb" id="zOut" data-ic="zout">Zoom out</button><button class="btn pb" id="zHome" title="Return to your army" data-ic="home">My army</button><button class="btn pb" id="zFit" data-ic="fit">Widest view</button></div>
+      </div>
+      <div class="apane hide" data-pane="more">
+        <div class="row"><button class="btn pb" id="bRestart" title="New ground and a new enemy plan" data-ic="restart">Restart</button><button class="btn pb" id="bHelp" data-ic="help">Help</button></div>
+        <div id="moreTxt"><div id="logo">IRON <span>&amp;</span> OAK</div><div id="otxt"></div><div id="hMoreStat"></div></div>
+      </div>
+    </div>
+  <div id="hud">
+    <div id="hStep"></div>
+    <div id="hInfo"><div id="meter"><i id="mP"></i><i id="mE"></i></div><span id="stxt"></span></div>
+    <div id="hCtl"><button class="btn" id="bPause">⏸</button><button class="btn" id="bSpeed">1×</button></div>
     <div id="selInfo">
       <div id="selName">Nothing selected</div>
       <div id="selMeta"></div>
@@ -139,33 +221,14 @@ html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.25 Georg
       <div class="bar"><i id="cohBar"></i></div>
       <div id="selDesc"></div>
     </div>
-    <div class="row" id="fRow">
-      <button class="btn" data-f="line">Line</button>
-      <button class="btn" data-f="shieldwall">Wall</button>
-      <button class="btn" data-f="square">Square</button>
-      <button class="btn" data-f="wedge">Wedge</button>
-      <button class="btn" data-f="loose">Loose</button>
-    </div>
-    <div class="row" id="adjRow">
-      <button class="btn" data-a="narrow">Narrow</button>
-      <button class="btn" data-a="wide">Wide</button>
-      <button class="btn" data-a="rotL">⟲ Turn</button>
-      <button class="btn" data-a="rotR">Turn ⟳</button>
-      <button class="btn" data-a="remove" id="bRemove">Remove</button>
-    </div>
-    <div class="row" id="cmdRow">
-      <button class="btn" data-a="hold">Hold</button>
-      <button class="btn" data-a="stop">Stop</button>
-      <button class="btn" data-a="multi">Multi</button>
-      <button class="btn" data-a="all">All</button>
-      <button class="btn" data-a="clear">Clear</button>
-    </div>
-    <div class="row" id="navRow"><button class="btn" id="nBack">◀ Back</button><button class="btn pri" id="nNext">Continue ▶</button></div>
-    <div class="row" id="depRow">
-      <button class="btn pri" id="bStart">Start battle</button>
+    <div id="hBar"></div>
+    <div id="hGo">
+      <div class="row" id="navRow"><button class="btn" id="nBack" title="Previous step">◀</button><button class="btn pri" id="nNext">Next ▶</button></div>
+      <div class="row" id="depRow"><button class="btn pri" id="bStart" title="Start the battle">Start ⚔</button></div>
     </div>
   </div>
 </div>
+
 
 <script>
 'use strict';
@@ -1595,6 +1658,133 @@ function cavImpact(sq,tg){
   sq.charge=0;sq.run=0;sq.cd=0.9;
   for(const s of sq.soldiers)s.sw=0.3;
 }
+/* ============================ VOLLEY FIRE ============================ */
+// Three archer firing modes. FIRE AT WILL is the old behaviour. VOLLEY FIRE gathers a commanded group into one shared cycle
+// (aim -> release -> reload) timed in REAL seconds, so it keeps its 2-3 s rhythm at 2x and 4x speed. HOLD FIRE blocks shots
+// without touching orders and remembers the underlying mode. Every arrow is still launched by volley() under the normal
+// cooldown, range, line-of-fire and damage rules; this section only decides WHEN an archer squad is allowed to loose.
+const VF={groups:new Map(),n:1,serial:0,cfg:{aim:0.8,window:0.3,grace:0.45,cycle:2.6,realTime:true}};
+const vfNow=()=>VF.cfg.realTime?(G.rt||0):G.t;
+const vfReload=()=>VF.cfg.cycle-VF.cfg.aim-VF.cfg.window-VF.cfg.grace;
+function vfCent(L){let x=0,y=0;for(const s of L){x+=s.x;y+=s.y}return{x:x/L.length,y:y/L.length}}
+function vfMembers(g){const o=[];for(const id of g.ids){const s=G.map.get(id);if(s&&s.state==='ok'&&s.type==='archer'&&s.vg===g.id)o.push(s)}return o}
+// a legitimate shot: visible, in range, and a clear line of fire (the same tests the normal firing code applies)
+function vfCan(sq,e){
+  if(!e||!isLive(e)||!G.vis[sq.team].has(e.id))return false;
+  const st=UT[sq.type],d=dist(sq,e);
+  return d<=rangeOf(sq,st)&&d>=(st.minR||0)&&losClear(sq,e,fireKind(sq));
+}
+const vfOk=(g,M)=>{const e=G.map.get(g.target);return !!e&&M.some(s=>vfCan(s,e))};
+function vfPick(g,M){   // one target for the whole group: the player's focus if it can be shot, else what most archers can hit
+  if(g.focus){const f=G.map.get(g.focus);if(f&&isLive(f)&&M.some(s=>vfCan(s,f)))return f;if(!f||!isLive(f))g.focus=null}
+  const c=vfCent(M);let best=null,bs=-1e9;
+  for(const e of G.foes[M[0].team]){
+    if(!isLive(e)||dist(e,c)>UT.archer.range+160)continue;
+    let n=0;for(const s of M)if(vfCan(s,e))n++;
+    if(!n)continue;
+    const sc=n*1000-dist(e,c)+((e.type==='archer'||e.type==='cannon')?60:0);
+    if(sc>bs){bs=sc;best=e}
+  }
+  return best;
+}
+function vfCancel(g){g.phase='idle';g.el=0;g.chk=0.3;g.target=null;g.cancels++}
+function vfStep(){
+  if(!VF.groups.size)return;
+  const now=vfNow(),C=VF.cfg;
+  for(const g of [...VF.groups.values()]){
+    const M=vfMembers(g);g.ids=M.map(s=>s.id);                       // fallen, routed or reassigned archers drop out of the schedule
+    if(!M.length){VF.groups.delete(g.id);continue}
+    const d=Math.max(0,now-(g.last===undefined?now:g.last));g.last=now;
+    if(M.every(s=>s.hf))continue;                                    // hold fire: the whole cycle waits, so nothing can release
+    g.el+=d;
+    if(g.phase==='idle'){
+      g.chk-=d;
+      if(g.chk<=0){g.chk=0.2;const e=vfPick(g,M);if(e){g.target=e.id;g.phase='aim';g.el=0}}
+    }else if(g.phase==='aim'){
+      if(!vfOk(g,M)){const e=vfPick(g,M);if(e)g.target=e.id;else{vfCancel(g);continue}}
+      if(g.el>=C.aim){
+        if(!vfOk(g,M)){const e=vfPick(g,M);if(e)g.target=e.id;else{vfCancel(g);continue}}   // died or slipped away at the last moment
+        g.phase='release';g.el=0;g.serial=++VF.serial;g.fired=0;g.volleys++;
+      }
+    }else if(g.phase==='release'){
+      if(g.el>=C.window+C.grace){g.phase='reload';g.el=0}
+    }else if(g.phase==='reload'){
+      if(g.el>=vfReload()){g.phase='idle';g.el=0;g.chk=0}
+    }
+  }
+}
+// May this archer squad loose now? Only archers are ever gated; everything else fires exactly as before.
+function vfAllow(sq){
+  if(sq.type!=='archer')return true;
+  if(sq.hf)return false;
+  if(sq.fm!=='volley')return true;
+  const g=VF.groups.get(sq.vg);
+  return !!g&&g.phase==='release'&&sq.vFired!==g.serial;            // one shot per volley, only while the window is open
+}
+function vfFired(sq){if(sq.type==='archer'&&sq.fm==='volley'){const g=VF.groups.get(sq.vg);if(g){sq.vFired=g.serial;g.fired++}}}
+function vfTarget(sq,own){   // group members aim at the group's target whenever they can legitimately hit it
+  const g=VF.groups.get(sq.vg);
+  if(g&&g.target&&(g.phase==='aim'||g.phase==='release')){const e=G.map.get(g.target);if(vfCan(sq,e))return e}
+  return own;
+}
+function vfLeave(s){const g=VF.groups.get(s.vg);if(g)g.ids=g.ids.filter(i=>i!==s.id);s.vg=null;s.fm='will'}
+function vfJoin(A){
+  const g0=VF.groups.get(A[0].vg);
+  if(g0&&A.every(s=>s.vg===g0.id)&&vfMembers(g0).length===A.length)return;   // already one group: keep its rhythm
+  for(const s of A)vfLeave(s);
+  const g={id:VF.n++,ids:A.map(s=>s.id),phase:'idle',el:0,chk:0,target:null,focus:null,serial:0,fired:0,volleys:0,cancels:0,last:vfNow()};
+  VF.groups.set(g.id,g);
+  for(const s of A){s.fm='volley';s.vg=g.id;s.vFired=-1}
+}
+function vfFocus(S,enemy){const seen=new Set();for(const s of S)if(s.type==='archer'&&s.fm==='volley'&&!seen.has(s.vg)){seen.add(s.vg);const g=VF.groups.get(s.vg);if(g)g.focus=enemy.id}}
+function setFireMode(m){
+  const A=selSquads().filter(s=>s.type==='archer'&&s.state==='ok');   // a mixed selection: only the archers change
+  if(!A.length){toast('Select archers first',COL.e);return}
+  if(m==='hold'){const all=A.every(s=>s.hf);for(const s of A)s.hf=!all;toast(all?'Fire resumed':'Hold fire',COL.p)}
+  else if(m==='will'){for(const s of A){vfLeave(s);s.hf=false}toast('Fire at will',COL.p)}
+  else if(m==='volley'){for(const s of A)s.hf=false;vfJoin(A);toast('Volley fire: '+A.length+' archer squad'+(A.length>1?'s':'')+' in step',COL.p)}
+  syncPanel();
+}
+function fireLabel(s){
+  const g=VF.groups.get(s.vg),ph=g?({idle:'waiting for a target',aim:'preparing',release:'releasing',reload:'reloading'})[g.phase]:'';
+  const base=s.fm==='volley'?'volley fire'+(ph?' ('+ph+')':''):'fire at will';
+  return s.hf?'HOLD FIRE (then '+base.split(' (')[0]+')':base;
+}
+function fireUI(){
+  if(!UI_ON||!G)return;
+  const A=selSquads().filter(s=>s.type==='archer'),show=G.phase==='battle'&&A.length>0;
+  $('fireRow').classList.toggle('hide',!show);$('fireInfo').classList.toggle('hide',!show);
+  if(!show)return;
+  const hold=A.every(s=>s.hf),vol=A.every(s=>s.fm==='volley'),will=A.every(s=>s.fm!=='volley');
+  document.querySelectorAll('#fireRow [data-fm]').forEach(b=>{const m=b.dataset.fm;b.classList.toggle('on',m==='hold'?hold:(!hold&&(m==='volley'?vol:will)))});
+  const f=A[0],mixed=!(vol||will);
+  $('fireInfo').textContent=(A.length>1?A.length+' archer squads: ':'')+(mixed?'mixed modes':hold?'HOLD FIRE (resumes '+(vol?'volley fire':'fire at will')+')':vol?fireLabel(f):'Fire at will')+(vol&&!hold&&A.length===1?'':'');
+}
+function drawVolley(g){
+  const px=1/CAM.z,C=VF.cfg;
+  g.textAlign='center';g.textBaseline='middle';
+  for(const s of G.squads)if(s.team==='p'&&s.type==='archer'&&s.hf&&isLive(s)){   // hold fire marker
+    g.strokeStyle='rgba(255,90,80,.95)';g.lineWidth=2*px;g.setLineDash([4*px,3*px]);g.beginPath();g.arc(s.x,s.y,s.rad+8,0,6.283);g.stroke();g.setLineDash([]);
+    g.fillStyle='rgba(255,120,110,1)';g.font='bold '+(9*px*1.2)+'px sans-serif';g.fillText('HOLD',s.x,s.y-s.rad-16*px);
+  }
+  for(const grp of VF.groups.values()){
+    const M=vfMembers(grp).filter(s=>s.team==='p'&&visibleToPlayer(s));if(!M.length||grp.phase==='idle')continue;
+    const col=grp.phase==='aim'?'rgba(255,214,102,.95)':grp.phase==='release'?'rgba(255,255,255,1)':'rgba(130,160,210,.85)';
+    for(const s of M){
+      const r=s.rad+10;g.strokeStyle=col;g.lineWidth=2.2*px;g.beginPath();
+      if(grp.phase==='aim'){g.arc(s.x,s.y,r,-1.5708,-1.5708+6.283*clamp(grp.el/C.aim,0,1))}
+      else if(grp.phase==='release'){g.arc(s.x,s.y,r+3,0,6.283);g.fillStyle='rgba(255,255,255,.28)';g.fill()}
+      else{g.arc(s.x,s.y,r,-1.5708,-1.5708+6.283*(1-clamp(grp.el/vfReload(),0,1)))}
+      g.stroke();
+    }
+    const e=grp.target&&G.map.get(grp.target);
+    if(grp.phase==='aim'&&e&&isLive(e)){const c=vfCent(M);g.strokeStyle='rgba(255,214,102,.55)';g.lineWidth=1.5*px;g.setLineDash([6*px,5*px]);g.beginPath();g.moveTo(c.x,c.y);g.lineTo(e.x,e.y);g.stroke();g.setLineDash([]);
+      g.beginPath();g.arc(e.x,e.y,e.rad+6,0,6.283);g.stroke()}
+    const c=vfCent(M);g.fillStyle=col;g.font='bold '+(10*px*1.2)+'px sans-serif';
+    g.fillText(grp.phase==='aim'?'VOLLEY: AIMING':grp.phase==='release'?'VOLLEY: FIRE!':'VOLLEY: RELOADING',c.x,Math.min(...M.map(s=>s.y))-34*px);
+  }
+}
+
 function volley(sq,tg){
   const st=UT[sq.type],d=dist(sq,tg),T=Math.max(0.35,d/240);
   const lx=tg.x+(tg.vx||0)*T*0.8,ly=tg.y+(tg.vy||0)*T*0.8;
@@ -1959,7 +2149,7 @@ function stepSquad(sq,dt){
     o=sq.order;
   }
   if(ranged){
-    if(o.t!=='move')tg=pickRangedTarget(sq,st);
+    if(o.t!=='move'){tg=pickRangedTarget(sq,st);if(sq.fm==='volley')tg=vfTarget(sq,tg)}
   }else{
     if(!tg&&o.t==='idle'){const near=nearestFoe(sq,45);if(near&&Math.hypot(near.x-sq.anchor.x,near.y-sq.anchor.y)<140){tg=near;chase=true}}
     if(!tg&&o.t==='hold')tg=nearestFoe(sq,st.reach+4);
@@ -2020,9 +2210,9 @@ function stepSquad(sq,dt){
     const aligned=Math.abs(angNorm(want-sq.face))<(ranged?0.5:1.2);
     if(ranged){
       const d=dist(sq,tg);
-      if(sq.cd<=0&&sq.disrupt<=0&&sq.mor>12&&aligned&&d<=rangeOf(sq,st)&&d>=(st.minR||0)&&losClear(sq,tg,fireKind(sq))&&!(sq.type==='cannon'&&terrAt(sq.x,sq.y)===TK.MARSH)){
+      if(sq.cd<=0&&sq.disrupt<=0&&sq.mor>12&&aligned&&d<=rangeOf(sq,st)&&d>=(st.minR||0)&&losClear(sq,tg,fireKind(sq))&&!(sq.type==='cannon'&&terrAt(sq.x,sq.y)===TK.MARSH)&&vfAllow(sq)){
         if(sq.type==='cannon'&&Math.abs(angNorm(want-sq.face))>0.12){/* still aiming */}
-        else if(sq.type==='cannon')fireCannon(sq,tg);else volley(sq,tg);
+        else if(sq.type==='cannon')fireCannon(sq,tg);else{volley(sq,tg);vfFired(sq)}
       }
     }else{
       const gap=dist(sq,tg)-sq.rad-tg.rad;
@@ -2055,7 +2245,7 @@ function step(dt){
   G.anim+=dt;
   G.visT-=dt;if(G.visT<=0){G.visT=0.2;computeVisibility()}
   if(G.phase==='battle'){
-    G.t+=dt;
+    G.t+=dt;G.rt=(G.rt||0)+dt/Math.max(1,G.speed||1);vfStep();   // rt: real seconds, whatever the game speed
     G.aiT-=dt;if(G.aiT<=0){G.aiT=0.5;aiThink()}
     for(const s of G.squads)if(isLive(s))stepSquad(s,dt);
     separate();
@@ -2740,7 +2930,7 @@ function render(){
       ctx.strokeStyle='rgba(224,174,72,.4)';ctx.lineWidth=1.2*px;ctx.setLineDash([6*px,5*px]);ctx.stroke();ctx.setLineDash([])}
   }
   for(const s of vis)s.soldiers.forEach((so,i)=>drawSoldier(ctx,s,so,i));
-  drawGhosts(ctx);drawProj(ctx);drawFx(ctx);drawCanopy(ctx);drawIntel(ctx);drawEngGhost(ctx);
+  drawGhosts(ctx);drawVolley(ctx);drawProj(ctx);drawFx(ctx);drawCanopy(ctx);drawIntel(ctx);drawEngGhost(ctx);
   for(const s of vis)drawBars(ctx,s);
   ctx.restore();
   drawMini(ctx);
@@ -2752,8 +2942,11 @@ function clampCam(){
   CAM.x=vw>=WW?(WW-vw)/2:clamp(CAM.x,0,WW-vw);
   CAM.y=vh>=WH?(WH-vh)/2:clamp(CAM.y,0,WH-vh);
 }
-function fitCam(){if(!VW||!VH)return;CAM.fit=Math.min(VW/WW,VH/WH);CAM.z=CAM.fit;CAM.x=0;CAM.y=0;clampCam()}
-function focusCam(x,y,z){CAM.z=clamp(z,CAM.fit*0.95,2.4);CAM.x=x-VW/CAM.z/2;CAM.y=y-VH/CAM.z/2;clampCam()}
+function fitCam(a){   // fully zoomed out: the map covers the whole area; the anchor picks which part shows when the shapes differ
+  if(!VW||!VH)return;CAM.fit=Math.max(VW/WW,VH/WH);CAM.z=CAM.fit;const vw=VW/CAM.z,vh=VH/CAM.z;
+  CAM.x=(WW-vw)/2;CAM.y=a==='bottom'?WH-vh:a==='top'?0:(WH-vh)/2;clampCam();CAM.anchor=a||'mid';CAM.aPos=[CAM.x,CAM.y];
+}
+function focusCam(x,y,z){CAM.z=clamp(z,CAM.fit,2.4);CAM.x=x-VW/CAM.z/2;CAM.y=y-VH/CAM.z/2;clampCam()}
 // The world is big: start looking at your own side, and let the home button bring you back to your army.
 function focusHome(){
   if(!VW||!VH)return;
@@ -2762,7 +2955,7 @@ function focusHome(){
   focusCam(x,y,Math.max(0.62,CAM.fit*1.05));
 }
 const MINI={drag:null};
-function miniRect(){const w=Math.min(92,VW*0.24);return{x:VW-w-8,y:VH-w*WH/WW-8,w,h:w*WH/WW}}
+function miniRect(){const w=Math.min(92,VW*0.24);return{x:VW-w-8,y:VH-w*WH/WW-8-(UIPAD.b||0),w,h:w*WH/WW}}
 function miniHit(px,py){if(!MAP||!MAP.layers)return false;const m=miniRect();return px>=m.x-4&&px<=m.x+m.w+4&&py>=m.y-4&&py<=m.y+m.h+4}
 function miniGo(px,py){const m=miniRect();focusCam(clamp((px-m.x)/m.w,0,1)*WW,clamp((py-m.y)/m.h,0,1)*WH,CAM.z)}
 function drawMini(g){
@@ -2777,14 +2970,20 @@ function drawMini(g){
 }
 function zoomAt(f,sx,sy){
   const wx=sx/CAM.z+CAM.x,wy=sy/CAM.z+CAM.y;
-  CAM.z=clamp(CAM.z*f,CAM.fit*0.95,2.4);CAM.x=wx-sx/CAM.z;CAM.y=wy-sy/CAM.z;clampCam();
+  CAM.z=clamp(CAM.z*f,CAM.fit,2.4);CAM.x=wx-sx/CAM.z;CAM.y=wy-sy/CAM.z;clampCam();
 }
 function resize(){
   if(!cv)return;
+  const oVW=VW,oVH=VH,oz=CAM.z;
   dpr=window.devicePixelRatio||1;VW=cv.clientWidth;VH=cv.clientHeight;
   if(!VW||!VH)return;
+  // when the area changes (a panel opens, the window turns), stay attached to the same centre and to the top or bottom edge if we were on it
+  const had=!!(oVW&&oVH),pristine=had&&CAM.anchor&&CAM.aPos&&Math.abs(CAM.x-CAM.aPos[0])<1.5&&Math.abs(CAM.y-CAM.aPos[1])<1.5,ocx=had?CAM.x+oVW/oz/2:0,ocy=had?CAM.y+oVH/oz/2:0,top=had&&CAM.y<=1,btm=had&&CAM.y+oVH/oz>=WH-1;
   cv.width=Math.max(1,Math.floor(VW*dpr));cv.height=Math.max(1,Math.floor(VH*dpr));
-  const wasFit=Math.abs(CAM.z-CAM.fit)<1e-6;CAM.fit=Math.min(VW/WW,VH/WH);if(wasFit||CAM.z<0.05)CAM.z=CAM.fit;clampCam();
+  const wasFit=Math.abs(CAM.z-CAM.fit)<1e-3;CAM.fit=Math.max(VW/WW,VH/WH);if(wasFit||CAM.z<CAM.fit)CAM.z=CAM.fit;   // zoomed fully out stays fully out
+  if(wasFit&&pristine){fitCam(CAM.anchor);return}   // untouched since it was placed: keep the same anchor (e.g. your deployment zone at the bottom)
+  if(had){CAM.x=ocx-VW/CAM.z/2;CAM.y=top?0:btm?WH-VH/CAM.z:ocy-VH/CAM.z/2}
+  clampCam();
 }
 
 /* ============================ UI ============================ */
@@ -2849,7 +3048,7 @@ function handleTap(wx,wy){
   }
   const S=selSquads();if(!S.length){toast(terrainInfo(wx,wy),'#8fae63');return}
   const enemy=pickSquad(wx,wy,'e'),work=enemy?null:pickStruct(wx,wy,true);
-  if(enemy){for(const s of S)orderAttack(s,enemy);mark(enemy.x,enemy.y,'#ff6e5a')}
+  if(enemy){for(const s of S)orderAttack(s,enemy);vfFocus(S,enemy);mark(enemy.x,enemy.y,'#ff6e5a')}
   else if(work&&work.team!=='p'&&work.o){for(const s of S)orderBreach(s,work);mark(work.r[0]+work.r[2]/2,work.r[1]+work.r[3]/2,'#ff6e5a')}   // hack down a known enemy work
   else{
     let cx=0,cy=0;for(const s of S){cx+=s.x;cy+=s.y}cx/=S.length;cy/=S.length;
@@ -2921,6 +3120,7 @@ function newGame(keep,newMap){
      vis:{p:new Set(),e:new Set()},foes:{p:[],e:[]},result:null,snap:null,visT:0,aiT:0,alarm:-99,aiAdv:false,anim:0,sighted:false,why:'',obj:makeObj(OBJ_CHOICE),aiPatience:AI_PATIENCE,start:{p:0,e:0},
      step:'recon',structs:[],sidN:1,known:{p:new Set(),e:new Set()},intel:newIntel(),enemyPlan:null,aiLog:[],aiDone:{},navDirty:false,navT:0,ghost:null,ghostOk:false,ghostInfo:'',engSel:null,
      eng:{left:{p:MAP.eng,e:Math.round(MAP.eng*0.75)},max:MAP.eng,type:null,rot:0,undo:[],baseReach:{p:zoneReach(ZONE.p),e:zoneReach(ZONE.e)},baseLanes:lanePaths()}};
+  VF.groups.clear();VF.serial=0;
   if(prev){for(const s of prev)mkSquad('p',s.type,s.x,s.y,s.face,s.form,s.cols);fixPlayerSquads()}
   aiDeploy(prev);aiEngineer();G.enemyPlan=buildEnemyPlan();rebuildNav();computeVisibility();
   if(UI_ON){el.toasts.innerHTML='';el.over.classList.add('hide');setStep('recon')}
@@ -2934,6 +3134,83 @@ function showOver(){
     'Map: '+MAP.name+'. Enemy plan: '+G.plan.name+'. They '+G.plan.blurb+(G.aiLog.length?' Along the way they '+[...new Set(G.aiLog)].join('; ')+'.':'');
   $('oRe').textContent=win?'Next battle':'Retry (new ground)';
   el.over.classList.remove('hide');
+}
+/* ============================ BOTTOM HUD & ACTION BAR ============================ */
+// One permanent row along the bottom. Its categories open a panel directly above it; the panel holds the game's existing
+// controls (same buttons, same handlers), and the set of categories follows the phase and the current selection.
+const HUD={open:null,key:'',seen:new Set(),g:null,shown:null};
+const UIPAD={b:0};
+const HUDI={
+  plan:'<path d="M4 6h16M4 12h16M4 18h10"/>',scout:'<circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/>',
+  intel:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h6M9 16h6"/>',build:'<path d="M14 4l6 6-3 3-6-6z"/><path d="M12 9L4 17l3 3 8-8"/>',
+  roster:'<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/>',form:'<path d="M5 5h4v4H5zM15 5h4v4h-4zM5 15h4v4H5zM15 15h4v4h-4z"/><path d="M10 10h4v4h-4z"/>',
+  orders:'<path d="M6 3v18M6 4h11l-2 4 2 4H6"/>',combat:'<path d="M4 20L19 5M14 5h5v5M6 14l4 4"/>',select:'<path d="M4 4h16v16H4z" stroke-dasharray="3 3"/>',
+  view:'<circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/>',more:'<path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3.6"/>',
+  hold:'<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/><path d="M9 12h6"/>',stop:'<rect x="6" y="6" width="12" height="12" rx="1"/>',
+  turnL:'<path d="M9 4H5v4"/><path d="M5 8a8 8 0 1 1 2 9"/>',turnR:'<path d="M15 4h4v4"/><path d="M19 8a8 8 0 1 0-2 9"/>',
+  line:'<circle cx="4" cy="12" r="1.8"/><circle cx="9.3" cy="12" r="1.8"/><circle cx="14.7" cy="12" r="1.8"/><circle cx="20" cy="12" r="1.8"/>',
+  wall:'<path d="M3 9h18v6H3z"/><path d="M9 9v6M15 9v6"/>',square:'<path d="M6 6h12v12H6z"/><circle cx="12" cy="12" r="1.6"/>',wedge:'<path d="M12 4l7 15H5z"/>',
+  loose:'<circle cx="5" cy="7" r="1.7"/><circle cx="14" cy="5" r="1.7"/><circle cx="9" cy="14" r="1.7"/><circle cx="19" cy="12" r="1.7"/><circle cx="6" cy="19" r="1.7"/><circle cx="16" cy="19" r="1.7"/>',
+  narrow:'<path d="M3 12h6M21 12h-6M7 9l3 3-3 3M17 9l-3 3 3 3"/>',wide:'<path d="M9 12H3M15 12h6M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
+  remove:'<path d="M6 6l12 12M18 6L6 18"/>',multi:'<path d="M12 5v14M5 12h14"/>',all:'<path d="M5 5h6v6H5zM13 5h6v6h-6zM5 13h6v6H5zM13 13h6v6h-6z"/>',clear:'<circle cx="12" cy="12" r="8"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  fwill:'<path d="M4 12h14M13 7l5 5-5 5"/>',fvolley:'<path d="M3 7h12M3 12h12M3 17h12M13 4l4 3-4 3M13 9l4 3-4 3M13 14l4 3-4 3"/>',fhold:'<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/>',
+  zin:'<circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20M10 7v6M7 10h6"/>',zout:'<circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20M7 10h6"/>',
+  home:'<path d="M4 11l8-7 8 7M6 10v10h12V10"/>',fit:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  restart:'<path d="M20 11a8 8 0 1 0-2 6"/><path d="M20 4v7h-7"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>'
+};
+const hudSvg=k=>'<svg class="ic" viewBox="0 0 24 24">'+HUDI[k]+'</svg>';
+function typeCounts(S){const c={};for(const s of S)c[s.type]=(c[s.type]||0)+1;return Object.keys(c).map(k=>c[k]+' '+UT[k].ab).join(' · ')}
+// The categories that make sense right now: the smallest set that still reaches every command.
+function hudCats(dep,st,S){
+  const C=(id,ic,lb,tip)=>({id,ic,lb,tip});
+  const c=[];
+  if(G.phase==='over')return[C('view','view','View','Camera'),C('more','more','More','Restart, help and battle status')];
+  if(dep){
+    c.push(C('plan','plan','Plan','Planning steps and the battlefield setup'));
+    if(st==='recon')c.push(C('scout','scout','Scout','Reconnaissance missions'));
+    if(st==='brief')c.push(C('intel','intel','Intel','What your scouts found'));
+    if(st==='engineer')c.push(C('build','build','Build','Field works: trenches, barricades, stakes and more'));
+    if(st==='deploy'){c.push(C('roster','roster','Roster','Choose units to place'));if(S.length)c.push(C('form','form','Formation','Squad formation, width and facing'));c.push(C('select','select','Select','Select several squads'))}
+  }else{
+    if(S.length){c.push(C('orders','orders','Orders','Hold position, stop'));if(S.some(s=>s.type==='archer'))c.push(C('combat','combat','Combat','Archer firing modes'));c.push(C('form','form','Formation','Squad formation, width and facing'))}
+    c.push(C('select','select','Select','Select several squads'));
+  }
+  c.push(C('view','view','View','Camera'),C('more','more','More','Restart, help and battle status'));
+  return c;
+}
+function hudSync(){
+  if(!UI_ON||!G)return;
+  if(HUD.g!==G){HUD.g=G;HUD.open=null;HUD.shown=null;HUD.seen.clear();HUD.key=''}
+  const dep=G.phase==='deploy',st=G.step||'deploy',S=selSquads();
+  const k=G.phase+':'+st;
+  if(!HUD.seen.has(k)){HUD.seen.add(k);HUD.open=dep?({recon:'scout',brief:'intel',engineer:'build',deploy:'roster'})[st]||null:null}   // open the working panel when a planning step begins
+  const cats=hudCats(dep,st,S),key=cats.map(c=>c.id).join(),bar=$('hBar');
+  if(key!==HUD.key){HUD.key=key;bar.innerHTML=cats.map(c=>'<button class="cat" data-cat="'+c.id+'" title="'+c.tip+'">'+hudSvg(c.ic)+'<span>'+c.lb+'</span></button>').join('')}
+  if(HUD.open&&!cats.some(c=>c.id===HUD.open))HUD.open=null;
+  for(const b of bar.children)b.classList.toggle('act',b.dataset.cat===HUD.open);
+  const ap=$('apanel');ap.classList.toggle('hide',!HUD.open);
+  for(const p of ap.children)p.classList.toggle('hide',p.dataset.pane!==HUD.open);
+  $('hInfo').classList.toggle('hide',dep);$('hCtl').classList.toggle('hide',dep);   // strength and pause/speed only matter once the battle is on
+  $('hStep').innerHTML=dep?'<span>Step '+(stepIndex()+1)+' of 4</span><b>'+STEPS[stepIndex()][1].replace(/^\d\s*/,'')+'</b>':'<span>Battle</span><b>'+(G.phase==='over'?(G.result==='win'?'Victory':'Defeat'):(G.paused?'Paused':'In progress'))+'</b>';
+  const shown=HUD.open;hudScroll(shown!==HUD.shown);HUD.shown=shown;hudTick();   // scroll to a newly opened category once; never fight the player's own scrolling
+}
+// keep the open category in view on a narrow bar, and hint that the bar scrolls
+function hudScroll(reveal){
+  const bar=$('hBar'),a=bar.querySelector('.act');
+  if(reveal&&a){if(a.offsetLeft<bar.scrollLeft)bar.scrollLeft=Math.max(0,a.offsetLeft-4);else if(a.offsetLeft+a.offsetWidth>bar.scrollLeft+bar.clientWidth)bar.scrollLeft=a.offsetLeft+a.offsetWidth-bar.clientWidth+4}
+  bar.classList.toggle('fade',bar.scrollWidth>bar.clientWidth+2&&bar.scrollLeft+bar.clientWidth<bar.scrollWidth-2);
+}
+function hudTick(){
+  if(!UI_ON||!G)return;
+  const ap=$('apanel');UIPAD.b=0;   // keeps the minimap clear of the open panel
+  const ms=$('hMoreStat');if(ms)ms.textContent=el.stxt.textContent;
+  $('selInfo').title=(el.selName.textContent+' — '+el.selMeta.textContent+' '+el.selDesc.textContent).trim();
+}
+function hudInit(){
+  document.querySelectorAll('.pb[data-ic]').forEach(b=>{const t=b.textContent.trim();b.innerHTML=hudSvg(b.dataset.ic)+'<span>'+t+'</span>'});
+  $('hBar').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;HUD.open=HUD.open===b.dataset.cat?null:b.dataset.cat;hudSync();if(HUD.open)b.scrollIntoView({inline:'nearest',block:'nearest'})});
+  $('hBar').addEventListener('scroll',()=>hudScroll(false),{passive:true});addEventListener('resize',()=>{if(G)hudScroll(false)});
+  $('bPause').title='Pause / resume';$('bSpeed').title='Game speed';
 }
 function syncPanel(){
   if(!UI_ON||!G)return;
@@ -2958,23 +3235,24 @@ function syncPanel(){
     if(a==='hold')b.classList.toggle('on',S.length>0&&S.every(s=>s.order.t==='hold'));
   });
   el.bStart.disabled=!dep;
-  el.bPause.textContent=G.paused?'Resume':'Pause';el.bPause.disabled=G.phase!=='battle';el.bPause.classList.toggle('on',G.paused);
+  el.bPause.textContent=G.paused?'▶':'⏸';el.bPause.title=G.paused?'Resume':'Pause';el.bPause.disabled=G.phase!=='battle';el.bPause.classList.toggle('on',G.paused);
   el.bSpeed.textContent=G.speed+'×';
   const info=first||null;
-  if(S.length>1){el.selName.textContent=S.length+' units selected';el.selMeta.textContent=S.map(s=>UT[s.type].ab).join(' ');el.selDesc.textContent='Tap ground to move together, or tap an enemy to attack.'}
+  if(S.length>1){el.selName.textContent=S.length+' units selected';el.selMeta.textContent=typeCounts(S);el.selDesc.textContent='Tap ground to move together, or tap an enemy to attack.'}
   else if(info){
     el.selName.textContent=UT[info.type].name+'  ·  '+info.alive+'/'+info.start+' soldiers';
     el.selDesc.textContent=UT[info.type].desc;
   }else if(G.armed){el.selName.textContent=UT[G.armed].name;el.selMeta.textContent='Cost '+UT[G.armed].cost+' · '+UT[G.armed].n+' soldiers';el.selDesc.textContent=UT[G.armed].desc;el.hpBar.style.width='0';el.morBar.style.width='0';el.cohBar.style.width='0'}
   else{el.selName.textContent=dep?'Deployment':'Nothing selected';el.selMeta.textContent=dep?'Tap a squad on the map to edit it.':'Tap one of your squads to command it.';el.selDesc.textContent=dep?G.obj.desc:'';el.hpBar.style.width='0';el.morBar.style.width='0';el.cohBar.style.width='0'}
-  updateBars();
+  hudSync();updateBars();
 }
 function updateBars(){
   if(!UI_ON||!G)return;
+  fireUI();hudTick();
   const S=selSquads(),f=S[0];
   if(f&&S.length===1){
     el.hpBar.style.width=(100*clamp(f.hp/f.hpMax,0,1))+'%';el.morBar.style.width=(100*clamp(f.mor/f.maxMor,0,1))+'%';el.cohBar.style.width=f.coh+'%';
-    const flags=[FORM_LABEL[f.form]+' · width '+f.cols];
+    const flags=[FORM_LABEL[f.form]+' · width '+f.cols];if(f.type==='archer')flags.push(fireLabel(f));
     if(f.order.t==='hold')flags.push('holding');else if(f.order.t==='attack')flags.push('attacking');else if(f.order.t==='move')flags.push('moving');
     if(G.phase==='battle'){
       if(f.disrupt>0)flags.push('disrupted');if(f.flank>0)flags.push('flanked');if(f.surr)flags.push('surrounded');
@@ -3110,9 +3388,7 @@ function setStep(s){
   if(!G||G.phase!=='deploy')return;
   G.step=s;G.ghost=null;G.engSel=null;G.armed=null;G.ghostInfo='';
   if(UI_ON&&VW){
-    if(s==='recon'||s==='brief')fitCam();
-    else if(s==='engineer')focusCam(WW/2,ZONE.p.y0-60,Math.max(0.55,CAM.fit*1.05));
-    else focusHome();
+    if(s==='recon'||s==='brief')fitCam('mid');else fitCam('bottom');   // fully zoomed out; your deployment zone on screen
     if(s==='brief')renderBrief();
   }
   syncPanel();
@@ -3200,6 +3476,7 @@ function init(){
   }
   el.fRow.addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b)setFormation(b.dataset.f)});
   document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>doAction(b.dataset.a)));
+  document.querySelectorAll('[data-fm]').forEach(b=>b.addEventListener('click',()=>setFireMode(b.dataset.fm)));
   el.bStart.onclick=startBattle;
   STEPS.forEach(([k,t])=>{const b=document.createElement('button');b.textContent=t;b.dataset.s=k;b.onclick=()=>setStep(k);$('seq').appendChild(b)});
   for(const id of Object.keys(MISSIONS)){const b=document.createElement('button');b.className='btn';b.dataset.m=id;b.innerHTML='<b>'+MISSIONS[id].name+'</b><small></small>';b.title=MISSIONS[id].desc;b.onclick=()=>doMission(id);$('rcBtns').appendChild(b)}
@@ -3217,6 +3494,7 @@ function init(){
   $('oRe').onclick=()=>newGame(true,true);
   $('oNew').onclick=()=>newGame(false,true);
   $('bHelp').onclick=()=>$('intro').classList.remove('hide');
+  hudInit();
   $('iGo').onclick=()=>$('intro').classList.add('hide');
   $('zIn').onclick=()=>zoomAt(1.25,VW/2,VH/2);
   $('zOut').onclick=()=>zoomAt(1/1.25,VW/2,VH/2);
@@ -3224,7 +3502,7 @@ function init(){
   $('zHome').onclick=()=>focusHome();
   bindInput();resize();addEventListener('resize',resize);
   if(window.ResizeObserver)new ResizeObserver(resize).observe(cv);
-  newGame(false,true);fitCam();focusHome();syncPanel();
+  newGame(false,true);fitCam('mid');syncPanel();
   requestAnimationFrame(()=>{resize();fitCam()});
   if(!loopId)loopId=requestAnimationFrame(frame);
 }
